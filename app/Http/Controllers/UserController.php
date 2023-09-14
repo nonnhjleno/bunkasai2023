@@ -25,9 +25,28 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $username = $request->input('username');
+
+        // 同じユーザー名が既に存在するか確認
+        $existingUser = User::where('username', $username)->first();
+
+        // 同じユーザー名が存在する場合はエラーレスポンスを返す
+        if ($existingUser) {
+            return response()->json([
+                "error" => "既に存在するユーザーネームです"
+            ], 400); 
+        }
+        
+        // 新しいユーザーを作成
+        $user = new User();
+        $user->username = $username;
+        $user->score = 0;
+        $user->save();
+
+        // 作成されたユーザー情報を返す
+        return response()->json($user, 201); // 201は作成成功を示すHTTPステータスコードです
     }
-    
+
 
     /**
      * Display the specified resource.
