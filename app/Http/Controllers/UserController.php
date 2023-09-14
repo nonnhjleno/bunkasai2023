@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
@@ -13,6 +15,7 @@ class UserController extends Controller
      */
     public function index()
     {
+        Log::info('成功');
         $result = User::find(1);
         return response()->json($result);
     }
@@ -24,6 +27,7 @@ class UserController extends Controller
     {
         //
     }
+    
 
     /**
      * Display the specified resource.
@@ -63,7 +67,26 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // リクエストから得点を取得
+        $newScore = (int) $request->input('score');
+        Log::info($request->all());
+
+        // ユーザーをデータベースから取得
+        $user = User::find($id);
+
+        // ユーザーが存在しない場合はエラーレスポンスを返す
+        if (!$user) {
+            return response()->json(['message' => 'ユーザーが見つかりません'], 404);
+        }
+
+        // 得点を更新
+        $user->score = $newScore;
+        $user->save();
+
+        $user = User::find($id);
+
+        // 更新されたユーザー情報を返す
+        return response()->json($user);
     }
 
     /**

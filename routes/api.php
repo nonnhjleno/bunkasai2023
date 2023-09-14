@@ -21,3 +21,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('/test',[UserController::class,'index'])->name('test.index');
 Route::get('/searchUser',[UserController::class,'show'])->name('user.search');
+Route::put('/updateScore/{id}',[UserController::class,'update'])->name('user.update.score');
