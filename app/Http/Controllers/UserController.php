@@ -51,38 +51,38 @@ class UserController extends Controller
         return response()->json($user, 201); // 201は作成成功を示すHTTPステータスコードです
     }
 
-
     /**
      * Display the specified resource.
      */
     public function show(Request $request)
     {
+        //TODO ひらがな対応
         $query = $request->input('username');
-
-        // 全角空白を半角スペースに変換
         $query = str_replace('　', ' ', $query);
-
-        // スペースでキーワードを分割
         $keywords = explode(' ', $query);
-
+        
         if (count($keywords) === 1) {
-            // キーワードが1つの場合、完全一致検索を行う
-            $users = User::where('username', $query)->get();
+            $users = User::select('id', 'username', 'score')
+                ->where('username', $query)
+                ->get();
         } else {
-            // キーワードが複数ある場合、AND検索を行う
-            $users = User::where(function ($query) use ($keywords) {
-                foreach ($keywords as $keyword) {
-                    $query->orWhere('username', 'like', '%' . $keyword . '%');
-                }
-            })->get();
+            $users = User::select('id', 'username', 'score')
+                ->where(function ($query) use ($keywords) {
+                    foreach ($keywords as $keyword) {
+                        $query->orWhere('username', 'like', '%' . $keyword . '%');
+                    }
+                })
+                ->get();
         }
-
+        
         if ($users->isEmpty()) {
-            // 部分一致で検索
-            $users = User::where('username', 'like', '%' . $query . '%')->get();
+            $users = User::select('id', 'username', 'score')
+                ->where('username', 'like', '%' . $query . '%')
+                ->get();
         }
-
-        return response()->json($users);
+        
+        return response()->json($users,200,[],JSON_UNESCAPED_UNICODE);
+        
     }
 
     /**
