@@ -56,7 +56,6 @@ class UserController extends Controller
      */
     public function show(Request $request)
     {
-        //TODO ひらがな対応
         $query = $request->input('username');
         $query = str_replace('　', ' ', $query);
         $keywords = explode(' ', $query);
