@@ -15,10 +15,14 @@ class UserController extends Controller
      */
     public function index()
     {
-        Log::info('成功');
-        $result = User::find(1);
-        return response()->json($result);
-    }
+        // Log::info('成功');
+        // $result = User::find(1);
+        // return response()->json($result);
+
+        $users = User::orderBy('score', 'desc')->select('username', 'score')->get();
+
+        return response()->json($users);
+        }
 
     /**
      * Store a newly created resource in storage.
