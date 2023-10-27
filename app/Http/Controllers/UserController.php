@@ -22,7 +22,7 @@ class UserController extends Controller
         $users = User::orderBy('score', 'desc')->select('username', 'score')->get();
 
         return response()->json($users);
-        }
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -38,9 +38,9 @@ class UserController extends Controller
         if ($existingUser) {
             return response()->json([
                 "error" => "既に存在するユーザーネームです"
-            ], 400); 
+            ], 400);
         }
-        
+
         // 新しいユーザーを作成
         $user = new User();
         $user->username = $username;
@@ -59,7 +59,7 @@ class UserController extends Controller
         $query = $request->input('username');
         $query = str_replace('　', ' ', $query);
         $keywords = explode(' ', $query);
-        
+
         if (count($keywords) === 1) {
             $users = User::select('id', 'username', 'score')
                 ->where('username', $query)
@@ -73,15 +73,14 @@ class UserController extends Controller
                 })
                 ->get();
         }
-        
+
         if ($users->isEmpty()) {
             $users = User::select('id', 'username', 'score')
                 ->where('username', 'like', '%' . $query . '%')
                 ->get();
         }
-        
-        return response()->json($users,200,[],JSON_UNESCAPED_UNICODE);
-        
+
+        return response()->json($users, 200, [], JSON_UNESCAPED_UNICODE);
     }
 
     /**
@@ -118,8 +117,26 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
-        //
+        $user = User::find($id);
+
+        if ($request->input('option') === 'score') {
+            $user->score = 0;
+            $user->save();
+            return response()->json(['message' => 'id = ' . $user['id'] . 'の点数が0点になりました。'], 200, [], JSON_UNESCAPED_UNICODE);
+        } else if ($request->input('option') === 'all') {
+
+            if (!$user) {
+                return response()->json(['message' => 'ユーザーが見つかりません'], 404, [], JSON_UNESCAPED_UNICODE);
+            }
+
+            try {
+                $user->delete();
+                return response()->json(['message' => 'id = ' . $user['id'] . 'のデータが削除されました。'], 200, [], JSON_UNESCAPED_UNICODE);
+            } catch (\Exception $e) {
+                return response()->json(['message' => '削除中にエラーが発生しました'], 500, [], JSON_UNESCAPED_UNICODE);
+            }
+        }
     }
 }
