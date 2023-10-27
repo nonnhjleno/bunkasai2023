@@ -91,10 +91,14 @@ class UserController extends Controller
     {
         // リクエストから得点を取得
         $newScore = (int) $request->input('score');
-        Log::info($request->all());
 
         // ユーザーをデータベースから取得
         $user = User::find($id);
+        Log::info($user['score']);
+
+        if($newScore < $user['score']){
+            $newScore = $user['score'];
+        }
 
         // ユーザーが存在しない場合はエラーレスポンスを返す
         if (!$user) {
