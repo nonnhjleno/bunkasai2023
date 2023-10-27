@@ -23,3 +23,4 @@ Route::get('/test',[UserController::class,'index'])->name('test.index');
 Route::get('/searchUser',[UserController::class,'show'])->name('user.search');
 Route::put('/updateScore/{id}',[UserController::class,'update'])->name('user.update.score');
 Route::post('/createUser',[UserController::class,'store'])->name('user.create');
+Route::delete('/deleteUser/{id}',[UserController::class,'destroy'])->name('user.delete');
