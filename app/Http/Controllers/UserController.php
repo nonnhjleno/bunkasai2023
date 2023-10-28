@@ -19,7 +19,7 @@ class UserController extends Controller
         // $result = User::find(1);
         // return response()->json($result);
 
-        $users = User::orderBy('score', 'desc')->select('username', 'score')->get();
+        $users = User::orderBy('score', 'desc')->select('id','username', 'score')->get();
 
         return response()->json($users);
     }
