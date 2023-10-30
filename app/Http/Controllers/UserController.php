@@ -59,29 +59,19 @@ class UserController extends Controller
         $query = $request->input('username');
         $query = str_replace('　', ' ', $query);
         $keywords = explode(' ', $query);
-
-        if (count($keywords) === 1) {
-            $users = User::select('id', 'username', 'score')
-                ->where('username', $query)
-                ->get();
-        } else {
-            $users = User::select('id', 'username', 'score')
-                ->where(function ($query) use ($keywords) {
-                    foreach ($keywords as $keyword) {
-                        $query->orWhere('username', 'like', '%' . $keyword . '%');
-                    }
-                })
-                ->get();
+    
+        $users = User::select('id', 'username', 'score');
+    
+        foreach ($keywords as $keyword) {
+            $users->orWhere('username', 'like', '%' . $keyword . '%');
         }
-
-        if ($users->isEmpty()) {
-            $users = User::select('id', 'username', 'score')
-                ->where('username', 'like', '%' . $query . '%')
-                ->get();
+    
+        $users->orWhere('username', 'like', '%' . $query . '%');
+    
+        $result = $users->get();
+    
+        return response()->json($result, 200, [], JSON_UNESCAPED_UNICODE);
         }
-
-        return response()->json($users, 200, [], JSON_UNESCAPED_UNICODE);
-    }
 
     /**
      * Update the specified resource in storage.
