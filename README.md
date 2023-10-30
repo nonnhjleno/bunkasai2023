@@ -114,7 +114,7 @@
 }
 ```
 
-## Security Vulnerabilities
+# Security Vulnerabilities
 
 部活外のインターネットから接続されることを想定していません。
 
