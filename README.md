@@ -120,7 +120,7 @@
 
 # Author
 
-- 作成者: 情報技術科3年16番 金野太誓
+- 作成者: 宮城県工業高等学校 情報技術科3年16番 金野太誓
 - 所属: 情報研究部 Webチーム
 - E-mail: taaaisei999@gmail.com
 - GitHub: [Nonnhjleno](https://github.com/nonnhjleno/)
