@@ -1,66 +1,135 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<h1 align="center">パックマンランキング用サーバー</h1>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## このプロジェクトについて
 
-## About Laravel
+- 利用者登録されたデータとパックマンアプリを接続するRESTful APIを提供するLaravelで作られたサーバーです。
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 起動のための初期設定と起動方法
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+0. Gitでクローンした場合には `composer install` で必要なライブラリを一括でインストールする。
+1. .envファイルを .env.exampleから複製後、必要事項を書き込む。
+    - DB_HOST
+    - DB_PORT
+    - DB_DATABASE
+    - DB_USERNAME
+    - DB_PASSWORD
+2. `php artisan serve` で起動する（他のPCと接続する場合には `php artisan serve --host=0.0.0.0` ）。
+3. `php artisan migrate` で必要なデータベースとテーブルを作成する。
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## エンドポイント
 
-## Learning Laravel
+### 1. ユーザー一覧取得
+- URL: `/api/test`
+- メソッド: GET
+- 説明: ユーザーの一覧を得点の降順で取得します。ランキングアプリではこれが使われています。
+- リクエスト: `/api/test`
+- レスポンス:
+```json
+Status: 200 OK
+[
+  {
+      "id": 1,
+      "username": "ユーザー1",
+      "score": 100
+  },
+  {
+      "id": 2,
+      "username": "ユーザー2",
+      "score": 75
+  },
+  ...
+]
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 2. ユーザー検索
+- URL: `/api/searchUser`
+- メソッド: GET
+- 説明: ユーザーを検索するためのエンドポイントです。ユーザー名に基づいて検索を行い、結果を取得します。複数のキーワードを指定でき、部分一致検索を行います。
+- リクエスト: `/api/searchUser?username=キーワード`
+- クエリパラメータ: `username`（必須）: 検索キーワード。複数のキーワードをスペースで区切って指定できます。
+- レスポンス:
+```json
+Status: 200 OK
+[
+  {
+      "id": 1,
+      "username": "ユーザー1",
+      "score": 100
+  },
+  {
+      "id": 2,
+      "username": "ユーザー2",
+      "score": 75
+  },
+  ...
+]
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 3. ユーザー得点更新
+- URL: `/api/createUser`
+- メソッド: POST
+- 説明: 新しいユーザーを作成します。ユーザー名は一意である必要があります。
+- リクエスト: `/api/createUser?username=キーワード`
+- クエリパラメータ: `username`（必須）: 作成するユーザーの名前。
+- レスポンス:
+```json
+Status: 201 Created
+{
+    "id": 3,
+    "username": "新しいユーザー名",
+    "score": 0
+}
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 4. ユーザー作成
+- URL: `/api/updateScore/{id}`
+- メソッド: PUT
+- 説明: ユーザーの得点を更新します。新しい得点が現在の得点よりも低い場合は更新されません。
+- リクエスト: `/api/updateScore/1`
+- クエリパラメータ: `score`（必須）: 更新するユーザーの点数。
+- レスポンス:
+```json
+Status: 200 OK
+{
+    "id": 1,
+    "username": "ユーザー1",
+    "score": 120
+}
+```
 
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 4. ユーザー削除
+- URL: `/api/deleteUser/{id}`
+- メソッド: DELETE
+- 説明: ユーザーを削除します。削除対象はオプションで指定できます。
+    1. 点数を0点にする（ユーザー得点更新で0点に更新しても挙動は同じです）。
+    2. ユーザーをテーブルから完全に削除。
+- クエリパラメータ: `option`（必須）: `score`の場合には点数が0点に更新されます（ランキングに表示されなくなります）。`all`の場合にはテーブルからユーザーが削除されます。
+- レスポンス:
+1. 
+```json
+Status: 200 OK
+{
+    "message": "id = 1の点数が0点になりました。"
+}
+```
+2. 
+```json
+Status: 200 OK
+{
+    "message": "id = 1のデータが削除されました。"
+}
+```
 
 ## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+部活外のインターネットから接続されることを想定していません。
 
-## License
+# Author
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- 作成者: 情報技術科3年16番 金野太誓
+- 所属: 情報研究部 Webチーム
+- E-mail: taaaisei999@gmail.com
+- GitHub: [Nonnhjleno](https://github.com/nonnhjleno/)
+
+# License
+The source code is licensed MIT. The website content is licensed CC BY 4.0,see LICENSE.
