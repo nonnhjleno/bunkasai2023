@@ -7,7 +7,7 @@
 # 起動のための初期設定と起動方法
 
 0. Gitでフォークした場合には `composer install` で必要なライブラリを一括でインストールする。
-1. .envファイルを .env.exampleから複製後、必要事項を書き込む。
+1. .envファイルを .env.exampleから複製して作成。必要事項を書き込む。
     - DB_HOST
     - DB_PORT
     - DB_DATABASE
